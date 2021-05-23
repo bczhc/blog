@@ -89,7 +89,7 @@ UTF-8是一种可变长的编码方案，每一个字符编码0 - 4个字节。[
 
 填充：11110<span style="color: pink">000</span> 10<span style="color: pink">0</span><span style="color: blue">11111</span> 10<span style="color: green">001101</span> 10<span style="color: red">001110</span>
 
-填充结果就是所得的UTF-8编码了，所以“🍎”的UTF-8编码为：F0 9F 8D 8E。
+填充结果就是所得的UTF-8编码了，所以“🍎”的UTF-8编码为：F0 9F 8D 8E
 
 在解析UTF-8的时候就可以根据最头一个字节判断那个字符被编码的字节长，然后根据相应长度的编码方式逆回去就好了。
 
@@ -107,25 +107,23 @@ UTF-16也是一种变长的编码方案，每个字符可以被编码成2或4个
 
 - 但是如果码点范围在U+FFFF - U+10FFFF呢？
 
-  一个16位整型就装不下，需要上升至一个32位整型。
+  此时UTF-16就需要4个字节来编码了。那么如何保证在编码过后能知道一个字符是占两字节还是四字节呢，这肯定得有一些标记，因此UTF-16里面引入了一个叫代理对（Surrogate Pair）的东西，作为码点超过U+FFFF的映射。
 
-  和UTF-32不一样了，如果还像UTF-32那样直接编码的话，在读取和解析UTF-16的时候就不能区分一个字符到底是2字节的还是4字节的了。所以UTF-16里面引入了一个叫代理对（Surrogate Pair）的东西。
-
-  Unicode中划分了两块区域，就是为了编码UTF-16，充当高代理和低代理。
+  Unicode中划分了两块区域，就是为了编码UTF-16，充当高位代理和低位代理。
 
   | Block           | Name                        |
   | :-------------- | --------------------------- |
   | U+D800 - U+DB7F | High Surrogates             |
   | U+DB80 - U+DBFF | High Private Use Surrogates |
   | U+DC00 - U+DFFF | Low Surrogates              |
-
-  U+DB80 - U+DBFF的范围是用于私有区块的，这里直接就把它们统称为高代理，也就是：
+  
+  U+DB80 - U+DBFF的范围是用于私有区块的，这里直接就把它们统称为高位代理，也就是：
 
   | Codepoint range | Usage           |
   | :-------------- | --------------- |
   | U+D800 - U+DBFF | High Surrogates |
   | U+DC00 - U+DFFF | Low Surrogates  |
-
+  
   由于一个21位的码点用16位整型存不下，所以依靠代理码点，算法如下：
 
   把要代理的码点减去10000<sub>16</sub>，此时的值就限定在了20位。
@@ -135,7 +133,7 @@ UTF-16也是一种变长的编码方案，每个字符可以被编码成2或4个
   - 把20位的结果值低10位加上dc00<sub>16</sub>，即低位代理的开始码点，就是低位代理结果了。
 
     例如“🍎”的码点为127822，减去10000<sub>16</sub>得62286，转换为二进制是<span style="color: red;">0000111100</span> <span style="color: green">1101001110</span>
-    
+  
     高10位<span style="color: red;">0000111100</span>加上d800<sub>16</sub>得d83c<sub>16</sub>
     
     低10位<span style="color: green">1101001110</span>加上dc00<sub>16</sub>得d34e<sub>16</sub>
@@ -146,5 +144,5 @@ UTF-16也是一种变长的编码方案，每个字符可以被编码成2或4个
 
 ### 批注
 
-- 1. <span id="nb1"></span> nb1: changed from [RFC2279](https://tools.ietf.org/html/rfc2279)
+- 1. <span id="nb1"></span> nb1: UTF-8编码可能上升至6字节，但是为了兼容UTF-16的最大编码，依然设置为4字节。来自[RFC2279](https://tools.ietf.org/html/rfc2279)的改变。
 

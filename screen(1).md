@@ -2,17 +2,17 @@
 
 #### 基本窗口操作
 
-**create: **screen -S \<session-name\>
+**create:** screen -S \<session-name\>
 
-**reattach: **screen -dr \<session-name\>
+**reattach:** screen -dr \<session-name\>
 
-**list: **screen -ls
+**list:** screen -ls
 
-**detach: **
+**detach:**
 
 ```bash
        ───────────────────────────────────────────────────────────────────────
-       C-a d,             (detach)          Detach screen from this terminal.
+       C-a d              (detach)          Detach screen from this terminal.
        ───────────────────────────────────────────────────────────────────────
 ```
 
@@ -47,11 +47,11 @@
 
 #### 更多窗口操作
 
-**kill: **
+**kill:**
 
 ```bash
        ───────────────────────────────────────────────────────────────────────
-       C-a k,             (kill)            Destroy current window.
+       C-a k              (kill)            Destroy current window.
        ───────────────────────────────────────────────────────────────────────
 ```
 

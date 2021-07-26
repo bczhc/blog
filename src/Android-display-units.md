@@ -16,6 +16,9 @@ $$
 &P=\frac {SD} A, D=\frac {AP} S\\
 &m=\frac D A=\frac P S\\
 &n=Bm=CD\\
-&1dp=\frac {127}{8000}\rm{cm}=\frac 1 {160}\rm{in}
+&1\rm dp=\frac {127}{8000}\rm{cm}=\frac 1 {160}\rm{in}
 \end{aligned}\\
 $$
+
+
+如果不支持LaTex，查看[图片](../images/formula_0.png)。

@@ -3,7 +3,8 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>docker - Notes</title>
+        <title>Notes</title>
+        <meta name="robots" content="noindex" />
         <!-- Custom HTML head -->
         
 
@@ -77,7 +78,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="Unicode-and-UTF-family.html"><strong aria-hidden="true">1.</strong> Unicode-and-UTF-family</a></li><li class="chapter-item expanded "><a href="Android-display-units.html"><strong aria-hidden="true">2.</strong> Android-display-units</a></li><li class="chapter-item expanded "><a href="screen(1).html"><strong aria-hidden="true">3.</strong> screen(1)</a></li><li class="chapter-item expanded "><a href="docker.html" class="active"><strong aria-hidden="true">4.</strong> docker</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="Unicode-and-UTF-family.html"><strong aria-hidden="true">1.</strong> Unicode-and-UTF-family</a></li><li class="chapter-item expanded "><a href="Android-display-units.html"><strong aria-hidden="true">2.</strong> Android-display-units</a></li><li class="chapter-item expanded "><a href="screen(1).html"><strong aria-hidden="true">3.</strong> screen(1)</a></li><li class="chapter-item expanded "><a href="docker.html"><strong aria-hidden="true">4.</strong> docker</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -137,7 +138,191 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="docker的一些理解和基本命令实例"><a class="header" href="#docker的一些理解和基本命令实例">Docker的一些理解和基本命令实例</a></h2>
+                        <h1 id="unicode与utf家族"><a class="header" href="#unicode与utf家族">Unicode与UTF家族</a></h1>
+<h3 id="unicode"><a class="header" href="#unicode">Unicode</a></h3>
+<p>Unicode是一种字符集，其中编码了很多的字符，每个字符都有唯一的编号，即“码点”（codepoint）。</p>
+<p>码点的范围目前是0-0x10ffff，一个21比特的无符号整型，但是在计算机处理中大多都会把它直接当成一个32位无符号整型。每一个字符都有一个码点，但不是每一个0-0x10ffff的整数都是一个有效的码点。</p>
+<p>Unicode是向下兼容ASCII的，这意味着ASCII中的字符在Unicode中的码点就是它们的ASCII码。</p>
+<p>可以用Javascript中的<code>codePointAt</code>函数来获取一个字符的码点：</p>
+<pre><code class="language-javascript">&quot;a&quot;.codePointAt(0).toString(16)
+</code></pre>
+<p>结果为61，就是字符“a”的ASCII编码。</p>
+<p>用同样的方法，可以知道汉字“好”的码点，为0x597d。</p>
+<p>反过来，在Javascript中也可以用<code>String.fromCodePoint</code>从码点获取字符</p>
+<pre><code class="language-javascript">String.fromCodePoint(0x597d)
+</code></pre>
+<p>结果为“好”。</p>
+<p>码点可用U+C的形式表示，C是码点的十六进制，用最少四位数来表示。如“a”的Unicode就是：U+0061，“好”的Unicode是：U+597D。</p>
+<p>Unicode只是为每个字符编了码，但是那些字符是怎么进行存储的呢？这就需要用到UTF（Unicode Transformation Format）编码。</p>
+<h3 id="utf-32"><a class="header" href="#utf-32">UTF-32</a></h3>
+<p>UTF-32算是一种最简单粗暴的编码方式了，直接就是把每个码点当成32位无符号整型，然后存储它们的二进制，不做其他的转换。由名字也可知，UTF-32存储的每一个字符占用4字节空间，是一种定长的编码方案。</p>
+<p>比如“🍎”的码点是127822，补全到32位的二进制是：</p>
+<p><span style="color: pink">00000000 0000000</span>11 1110011 01001110</p>
+<p>以大端模式在内存中的存储是：00 01 F3 4E，那么这个就是UTF-32BE的编码结果了。</p>
+<p>但是由于一个32位整型是占4个字节，也就是需要超过一个字节来编码一个32位整型，于是这里就有了字节序（Endianness）的问题。</p>
+<p>因此UTF-32分大小端，分别写作UTF-32BE和UTF-32LE。</p>
+<p>可以使用位操作进行编码：</p>
+<pre><code class="language-c">char dest[4];
+uint32_t c = 127822;
+dest[0] = (char) (c &amp; 0xFF);
+dest[1] = (char) ((c &gt;&gt; 8) &amp; 0xFF);
+dest[2] = (char) ((c &gt;&gt; 16&gt; &amp; 0xFF));
+dest[3] = (char) ((c &gt;&gt; 24) &amp; 0xFF);
+</code></pre>
+<p><code>dest</code>就是UTF-32BE的编码结果。</p>
+<p>不过也能偷个懒，直接用C语言中的指针把32位无符号整型的内存表示取出来，此时UTF-32编码使用的字节序就是自己机器的字节序。</p>
+<pre><code class="language-c">uint32_t c = 127822;
+char *p = ((char *) &amp;c);
+</code></pre>
+<p><code>p</code>指针处偏移为0，长度为4的数据就是编码结果。</p>
+<h3 id="utf-8"><a class="header" href="#utf-8">UTF-8</a></h3>
+<p>UTF-8是一种可变长的编码方案，每一个字符编码0 - 4个字节。<a href="Unicode-and-UTF-family.html#nb1"><sup>nb1</sup></a></p>
+<table><thead><tr><th>Codepoint range</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr></thead><tbody>
+<tr><td>U+0000 - U+007F</td><td>0xxxxxxx</td><td></td><td></td><td></td></tr>
+<tr><td>U+0080 - U+07FF</td><td>110xxxxx</td><td>10xxxxxx</td><td></td><td></td></tr>
+<tr><td>U+0800 - U+FFFF</td><td>1110xxxx</td><td>10xxxxxx</td><td>10xxxxxx</td><td></td></tr>
+<tr><td>U+10000 - U+10FFFF</td><td>11110xxx</td><td>10xxxxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
+</tbody></table>
+<p>算法也不难，先根据码点范围确定字节长度，然后把码点的二进制对表格中相应行里的“x”从后往前填充就可以了，不够的补零。</p>
+<p>例如：&quot;🍎&quot;的码点是0x1f341，二进制是：1 11110011 01001110，根据表格前面的范围可知编码成UTF-8后需要四个字节。现在用它的二进制从后往前填充表格中的空：</p>
+<p>原二进制：<span style="color: blue">1 1111</span><span style="color: green">0011 01</span><span style="color: red">001110</span></p>
+<p>填充：11110<span style="color: pink">000</span> 10<span style="color: pink">0</span><span style="color: blue">11111</span> 10<span style="color: green">001101</span> 10<span style="color: red">001110</span></p>
+<p>填充结果就是所得的UTF-8编码了，所以“🍎”的UTF-8编码为：F0 9F 8D 8E</p>
+<p>在解析UTF-8的时候就可以根据最头一个字节判断那个字符被编码的字节长，然后根据相应长度的编码方式逆回去就好了。</p>
+<h3 id="utf-16"><a class="header" href="#utf-16">UTF-16</a></h3>
+<p>UTF-16也是一种变长的编码方案，每个字符可以被编码成2或4个字节。由于一个需要把一个16整型拆成两个字节，所以UTF-16也存在字节序的区分，分别记为：UTF-16BE，UTF-16LE。</p>
+<ul>
+<li>
+<p>对于范围在U+0000 - U+FFFF的码点，UTF-16是用两个字节来编码，此时也是简单粗暴，编码结果直接就是码点的二进制。</p>
+<p>如“好”的码点是22909，二进制为：</p>
+<p><span style="color: pink">0</span>1011001 01111101</p>
+<p>同UTF-32，用同样的方式就可以得到UTF-16BE的编码结果：59 7D</p>
+</li>
+<li>
+<p>但是如果码点范围在U+FFFF - U+10FFFF呢？</p>
+<p>此时UTF-16就需要4个字节来编码了。那么如何保证在编码过后能知道一个字符是占两字节还是四字节呢，这肯定得有一些标记，因此UTF-16里面引入了一个叫代理对（Surrogate Pair）的东西，作为码点超过U+FFFF的映射。</p>
+<p>Unicode中划分了两块区域，就是为了编码UTF-16，充当高位代理和低位代理。</p>
+<table><thead><tr><th align="left">Block</th><th>Name</th></tr></thead><tbody>
+<tr><td align="left">U+D800 - U+DB7F</td><td>High Surrogates</td></tr>
+<tr><td align="left">U+DB80 - U+DBFF</td><td>High Private Use Surrogates</td></tr>
+<tr><td align="left">U+DC00 - U+DFFF</td><td>Low Surrogates</td></tr>
+</tbody></table>
+<p>U+DB80 - U+DBFF的范围是用于私有区块的，这里直接就把它们统称为高位代理，也就是：</p>
+<table><thead><tr><th align="left">Codepoint range</th><th>Usage</th></tr></thead><tbody>
+<tr><td align="left">U+D800 - U+DBFF</td><td>High Surrogates</td></tr>
+<tr><td align="left">U+DC00 - U+DFFF</td><td>Low Surrogates</td></tr>
+</tbody></table>
+<p>由于一个21位的码点用16位整型存不下，所以依靠代理码点，算法如下：</p>
+<p>把要代理的码点减去10000<sub>16</sub>，此时的值就限定在了20位。</p>
+<ul>
+<li>
+<p>把20位的结果值高10位加上d800<sub>16</sub>，即高位代理的开始码点，就是高位代理结果了。</p>
+</li>
+<li>
+<p>把20位的结果值低10位加上dc00<sub>16</sub>，即低位代理的开始码点，就是低位代理结果了。</p>
+<p>例如“🍎”的码点为127822，减去10000<sub>16</sub>得62286，转换为二进制是<span style="color: red;">0000111100</span> <span style="color: green">1101001110</span></p>
+<p>高10位<span style="color: red;">0000111100</span>加上d800<sub>16</sub>得d83c<sub>16</sub></p>
+<p>低10位<span style="color: green">1101001110</span>加上dc00<sub>16</sub>得d34e<sub>16</sub></p>
+<p>最终得到“🍎”的代理对是{0xd83c, 0xd34e}，然后分别对高位代理和低位代理UTF-16编码，就得到了最终4字节的UTF-16编码。上面例子的UTF-16BE编码是：D8 3C D3 4E</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="批注"><a class="header" href="#批注">批注</a></h3>
+<ul>
+<li>
+<ol>
+<li><span id="nb1"></span> nb1: UTF-8编码可能上升至6字节，但是为了兼容UTF-16的最大编码，依然设置为4字节。来自<a href="https://tools.ietf.org/html/rfc2279">RFC2279</a>的改变。</li>
+</ol>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="通过计算得出的一些安卓中单位换算关系式"><a class="header" href="#通过计算得出的一些安卓中单位换算关系式">通过计算得出的一些安卓中单位换算关系式：</a></h2>
+<p>为了更加简洁明了，每个变量都带单位，像物理中的公式一样。
+$$
+\begin{aligned}
+设：\
+&amp;P为\rm{px}，单位为\rm{px}\
+&amp;D为\rm{dp}，单位为\rm{dp}\
+&amp;m为\rm{inch}，单位为\rm{px\cdot in^{-1}}\
+&amp;n为\rm{cm}，单位为\rm{cm}\
+常量：\
+&amp;A=160\rm{dp\cdot in^{-1}}\
+&amp;B=2.54\rm{cm\cdot in^{-1}}\
+&amp;C=\frac {127}{8000}\rm{cm\cdot dp^{-1}}=\frac B A\
+则有：\
+&amp;P=\frac {SD} A, D=\frac {AP} S\
+&amp;m=\frac D A=\frac P S\
+&amp;n=Bm=CD\
+&amp;1\rm dp=\frac {127}{8000}\rm{cm}=\frac 1 {160}\rm{in}
+\end{aligned}\
+$$</p>
+<p>如果不支持LaTex，查看<a href="../images/formula_0.png">图片</a>。</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="自己较常用的一些screen操作"><a class="header" href="#自己较常用的一些screen操作">自己较常用的一些screen操作</a></h2>
+<h3 id="基本窗口操作"><a class="header" href="#基本窗口操作">基本窗口操作</a></h3>
+<p><strong>create:</strong> screen -S &lt;session-name&gt;</p>
+<p><strong>reattach:</strong> screen -dr &lt;session-name&gt;</p>
+<p><strong>list:</strong> screen -ls</p>
+<p><strong>detach:</strong></p>
+<pre><code>       ───────────────────────────────────────────────────────────────────────
+       C-a d              (detach)          Detach screen from this terminal.
+       ───────────────────────────────────────────────────────────────────────
+</code></pre>
+<h3 id="多视图"><a class="header" href="#多视图">多视图</a></h3>
+<pre><code>       ───────────────────────────────────────────────────────────────────────
+       C-a S              (split)           Split the current region horizon‐
+                                            tally into  two  new  ones.   See
+                                            also only, remove, focus.
+       ───────────────────────────────────────────────────────────────────────
+       C-a |              (split -v)        Split the current  region  verti‐
+                                            cally into two new ones.
+       ───────────────────────────────────────────────────────────────────────
+       C-a tab            (focus)           Switch the  input  focus  to  the
+                                            next region.  See also split, re‐
+                                            move, only.
+       ───────────────────────────────────────────────────────────────────────
+       C-a digit          (select 0-9)      Switch to window number 0 - 9
+       ───────────────────────────────────────────────────────────────────────
+       C-a c,             (screen)          Create  a new window with a shell
+                                            and switch to that window.
+       ───────────────────────────────────────────────────────────────────────
+       C-a '              (select)          Prompt  for a window name or num‐
+                                            ber to switch to.
+       ───────────────────────────────────────────────────────────────────────
+       C-a &quot;              (windowlist -b)   Present a list of all windows for
+                                            selection.
+       ───────────────────────────────────────────────────────────────────────
+       C-a Q              (only)            Delete  all  regions but the cur‐
+                                            rent one.  See  also  split,  re‐
+                                            move, focus.
+       ───────────────────────────────────────────────────────────────────────
+</code></pre>
+<p>若要在reattach之后仍然保持布局，在已attach上screen的时候进行：</p>
+<ol>
+<li></li>
+</ol>
+<pre><code>       ───────────────────────────────────────────────────────────────────────
+       C-a :              (colon)           Enter command line mode.
+       ───────────────────────────────────────────────────────────────────────
+</code></pre>
+<ol start="2">
+<li>输入<code>layout save default</code>命令并回车</li>
+</ol>
+<h3 id="更多窗口操作"><a class="header" href="#更多窗口操作">更多窗口操作</a></h3>
+<p><strong>kill:</strong></p>
+<pre><code>       ───────────────────────────────────────────────────────────────────────
+       C-a k              (kill)            Destroy current window.
+       ───────────────────────────────────────────────────────────────────────
+</code></pre>
+<p><strong>进入光标移动模式（可上下浏览滚动）：</strong></p>
+<pre><code>       ───────────────────────────────────────────────────────────────────────
+
+       C-a [,             (copy)            Enter copy/scrollback mode.
+       C-a esc
+       ───────────────────────────────────────────────────────────────────────
+</code></pre>
+<p><strong>退出光标移动模式：</strong></p>
+<p><kbd>esc</kbd>/<kbd>q</kbd></p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="docker的一些理解和基本命令实例"><a class="header" href="#docker的一些理解和基本命令实例">Docker的一些理解和基本命令实例</a></h2>
 <p>Docker是一个开源容器化平台，可以把部署环境打包在镜像中，从而更方便地移植。</p>
 <p><strong><a href="https://docs.docker.com">Docker文档</a></strong></p>
 <h3 id="镜像和容器"><a class="header" href="#镜像和容器">镜像和容器</a></h3>
@@ -307,18 +492,12 @@ bczhc@bczhc-manjaro docker]$ docker inspect bczhc/kali:1.0 | jq .[0].RootFS
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="screen(1).html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="screen(1).html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
             </nav>
 
         </div>
@@ -334,5 +513,10 @@ bczhc@bczhc-manjaro docker]$ docker inspect bczhc/kali:1.0 | jq .[0].RootFS
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
     </body>
 </html>

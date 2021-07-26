@@ -23,17 +23,23 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - Install rust
-        run: apt install rustc cargo -y
+      - name: Install rust
+        run: |
+          sudo apt update
+          sudo apt install rustc cargo -y
       - name: Install mdBook
         run: cargo install mdbook
       - name: Run mdBook
         run: mdbook build
       - name: Deploy book
         run: |
+          git config --global user.email "bczhc0@126.com"
+          git config --global user.name "bczhc"
+          git fetch origin
           git switch gh-pages
           mv book ..
           rm -rf *
           mv ../book/* .
+          git add --all
           if [[ `git commit -m update | grep "working tree clean"` != "" ]]; then exit; fi
           git push origin gh-pages -f

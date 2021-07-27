@@ -35,12 +35,11 @@ jobs:
         run: |
           git config --global user.email "bczhc0@126.com"
           git config --global user.name "bczhc"
-          mv book src/images ..
+          mv book ..
           git fetch origin
           git switch gh-pages
           rm -rf *
           mv ../book/* .
-          mv ../images .
           git add --all
           if [[ `git commit -m update | grep "working tree clean"` != "" ]]; then exit; fi
           git push origin gh-pages -f

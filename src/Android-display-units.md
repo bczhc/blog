@@ -21,4 +21,4 @@ $$
 $$
 
 
-如果不支持LaTex，查看[图片](../images/formula_0.png)。
+如果不支持LaTex，查看[图片](./images/formula_0.png)。

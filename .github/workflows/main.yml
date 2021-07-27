@@ -35,7 +35,7 @@ jobs:
         run: |
           git config --global user.email "bczhc0@126.com"
           git config --global user.name "bczhc"
-          mv book images ..
+          mv book src/images ..
           git fetch origin
           git switch gh-pages
           rm -rf *

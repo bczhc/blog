@@ -21,27 +21,28 @@
     - GLEW
     - GLAD
 
+> <pre>
 > OpenGL is a cross-language and cross-platform graphic API specification
 > GLX: OpenGL extension to the X Window System
 > Vulkan: a low-overhead, cross-platform API, open standard for 3D graphics and computing
 > GLUT: a library of utilities for OpenGL programs.
 > GLFW: a lightweight utility library for use with OpenGL (stands for graphics library framework)
-> XCB: a X11 protocol client-side implementation
->
-> API standard:
+> XCB: a X11 protocal client-side implementation
+>API standard:
 > OpenGL
 > DirectX
 > Vulkan
->
-> Associated libraries:
+> 
+>Associated libraries:
 > Context and window toolkits:
->     GLFW
+>  GLFW
 >     GLUT
-> Implementation:
->     Mesa
-> Extension loading libraries:
->     GLEW
+>    Implementation:
+>  Mesa
+>    Extension loading libraries:
+>  GLEW
 >     GLAD
+>    </pre>
 
 ## OpenGL
 

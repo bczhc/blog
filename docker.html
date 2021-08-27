@@ -134,15 +134,18 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="docker的一些理解和基本命令实例"><a class="header" href="#docker的一些理解和基本命令实例">Docker的一些理解和基本命令实例</a></h2>
+                        <h2 id="docker的一些理解和常用实例"><a class="header" href="#docker的一些理解和常用实例">Docker的一些理解和常用实例</a></h2>
 <p>Docker是一个开源容器化平台，可以把部署环境打包在镜像中，从而更方便地移植。</p>
 <p><strong><a href="https://docs.docker.com">Docker文档</a></strong></p>
+<p>在学习和使用Docker的时候，要善于使用Docker的<code>--help</code>、Linux的<code>man</code>手册命令以及官方文档。</p>
 <h3 id="镜像和容器"><a class="header" href="#镜像和容器">镜像和容器</a></h3>
-<p>docker中的镜像是只读的，由一个镜像（images）可以创建出多个容器（containers），每个容器是可以做更改的，在里面搭建应用环境并测试运行。一般一个容器可作为一个软件单元，包括了一个软件及其依赖，这样就可以方便应用环境的移植。</p>
-<p>docker中提供了很多的基础镜像，如ubuntu，centos等，这些镜像可以从Docker Hub拉取。</p>
+<p>docker中的镜像是只读的，由一个镜像（Image）可以创建出多个容器（Container），每个容器是可以做更改的，在里面搭建应用环境并测试运行。一般一个容器可作为一个软件单元，包括了一个软件及其依赖，这样就可以方便应用环境的移植。</p>
+<p>docker中提供了很多的基础镜像，如Ubuntu，CentOS等，这些镜像可以从Docker Hub拉取。</p>
 <h4 id="镜像"><a class="header" href="#镜像">镜像</a></h4>
 <h5 id="查看镜像"><a class="header" href="#查看镜像">查看镜像</a></h5>
-<p><code>docker images [OPTIONS] [REPOSITORY[:TAG]]</code></p>
+<blockquote>
+<p>docker images [OPTIONS] [REPOSITORY[:TAG]]</p>
+</blockquote>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker images
 REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
 base         1.0       667bc9764ca8   42 hours ago   170MB
@@ -168,7 +171,9 @@ Status: Downloaded newer image for kalilinux/kali-rolling:latest
 docker.io/kalilinux/kali-rolling:latest
 </code></pre>
 <h5 id="删除镜像"><a class="header" href="#删除镜像">删除镜像</a></h5>
-<p><code>docker rmi [OPTIONS] IMAGE [IMAGE...]</code></p>
+<blockquote>
+<p>docker rmi [OPTIONS] IMAGE [IMAGE...]</p>
+</blockquote>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker images
 REPOSITORY               TAG       IMAGE ID       CREATED        SIZE
 base                     1.0       667bc9764ca8   43 hours ago   170MB
@@ -181,7 +186,9 @@ Deleted: sha256:fc0f9d8985ccc19852bba10ed727e806aaf68b5d6796110cf313670087f26c9e
 </code></pre>
 <h4 id="容器"><a class="header" href="#容器">容器</a></h4>
 <h5 id="创建容器"><a class="header" href="#创建容器">创建容器</a></h5>
-<p><code>docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</code></p>
+<blockquote>
+<p>docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</p>
+</blockquote>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker images
 REPOSITORY               TAG       IMAGE ID       CREATED        SIZE
 base                     1.0       667bc9764ca8   43 hours ago   170MB
@@ -197,7 +204,9 @@ bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  roo
 exit
 </code></pre>
 <h5 id="删除容器"><a class="header" href="#删除容器">删除容器</a></h5>
-<p><code>docker rm [OPTIONS] CONTAINER [CONTAINER...]</code></p>
+<blockquote>
+<p>docker rm [OPTIONS] CONTAINER [CONTAINER...]</p>
+</blockquote>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker ps -a
 CONTAINER ID   IMAGE                    COMMAND   CREATED          STATUS                     PORTS     NAMES
 e32bcd9f43e0   kalilinux/kali-rolling   &quot;bash&quot;    23 minutes ago   Exited (0) 7 minutes ago             kali
@@ -222,7 +231,9 @@ e32bcd9f43e0   kalilinux/kali-rolling   &quot;bash&quot;    2 minutes ago   Exit
 </code></pre>
 <p>由于刚才的kali容器退出了，因此kali容器没有显示在<code>docker ps</code>中。</p>
 <h5 id="运行容器"><a class="header" href="#运行容器">运行容器</a></h5>
-<p><code>docker start [OPTIONS] CONTAINER [CONTAINER...]</code></p>
+<blockquote>
+<p>docker start [OPTIONS] CONTAINER [CONTAINER...]</p>
+</blockquote>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker start kali
 kali
 </code></pre>
@@ -240,7 +251,9 @@ bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  roo
 </code></pre>
 <p>只要容器不删除，在容器内的变更都会保存在本地。但是如果希望此时的变更可以长时间保存下来或者是作为一个单独的镜像，可以由这个镜像再在它的基础上开启容器。</p>
 <h5 id="提交容器变更到新的镜像"><a class="header" href="#提交容器变更到新的镜像">提交容器变更到新的镜像</a></h5>
-<p><code>docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</code></p>
+<blockquote>
+<p>docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</p>
+</blockquote>
 <p>首先基于把之前的kali容器打开并附着终端，并且创建一个文件</p>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker ps -a
 CONTAINER ID   IMAGE                    COMMAND   CREATED          STATUS                     PORTS     NAMES
@@ -272,7 +285,7 @@ bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  roo
 ┌──(root💀886e4ba7cd82)-[/]
 └─# 
 </code></pre>
-<p>就可以发现保留了刚才的变更。并且用<code>docker inspect [OPTIONS] NAME|ID [NAME|ID...]</code>查看这个新镜像，可以发现它有两层，这里的层就像git中的commits一样。</p>
+<p>就可以发现保留了刚才的变更。并且用<code>docker inspect</code>查看这个新镜像，可以发现它有两层，这里的层就像git中的commits一样。</p>
 <pre><code>[bczhc@bczhc-manjaro docker]$ docker inspect bczhc/kali:1.0
 ...
 
@@ -295,9 +308,125 @@ bczhc@bczhc-manjaro docker]$ docker inspect bczhc/kali:1.0 | jq .[0].RootFS
 }
 </code></pre>
 <p>它们的输出都为JSON，经过一些处理之后找到了相应的信息，发现<code>bczhc/kali</code>镜像比<code>kalilinux/kali-rolling</code>镜像多了一层，那一层就是我们刚才的改动层。</p>
+<h4 id="卷"><a class="header" href="#卷">卷</a></h4>
+<p>在Docker中有一种数据持久化的方案，就是使用卷（Volume），这些卷称为“数据卷”，内部可以存放数据。</p>
+<p>卷根据命名有两种形式：匿名卷（Anonymous Volume）和具名卷（Named Volume）。</p>
+<p>具名就是被命名的，相当于给卷起了一个名字；匿名卷是未指定名字的，会生成一个随机名字。</p>
+<p>关于管理卷的一些命令：</p>
+<pre><code>Usage:  docker volume COMMAND
+
+Manage volumes
+
+Commands:
+  create      Create a volume
+  inspect     Display detailed information on one or more volumes
+  ls          List volumes
+  prune       Remove all unused local volumes
+  rm          Remove one or more volumes
+</code></pre>
+<h5 id="创建卷"><a class="header" href="#创建卷">创建卷</a></h5>
+<blockquote>
+<p>Usage:  docker volume create [OPTIONS] [VOLUME]</p>
+</blockquote>
+<p>当不指定<code>VOLUME</code>的时候，也就是不指定卷的名字，就会创建一个匿名卷。</p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker volume create
+26a9cb0966f37f801cad57faffda177131021a5ff632d19d8474c8b5f2b5f8d6
+</code></pre>
+<p>或者指定卷的名字：</p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker volume create v123
+v123
+</code></pre>
+<h5 id="列出卷"><a class="header" href="#列出卷">列出卷</a></h5>
+<blockquote>
+<p>Usage:  docker volume ls [OPTIONS]</p>
+</blockquote>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker volume list
+DRIVER    VOLUME NAME
+local     26a9cb0966f37f801cad57faffda177131021a5ff632d19d8474c8b5f2b5f8d6
+local     v123
+</code></pre>
+<p>这样显示出了刚才创建的两个卷，匿名卷有一个随机生成的名字。</p>
+<h5 id="使用卷"><a class="header" href="#使用卷">使用卷</a></h5>
+<p>在创建窗口的时候，使用<code>--volume</code>或者<code>-v</code>来指定使用的卷，参数的格式是：</p>
+<blockquote>
+<p>-v|--volume[=[[HOST-DIR:]CONTAINER-DIR[:OPTIONS]]]</p>
+</blockquote>
+<p>其中<code>OPTIONS</code>最常用的是ro（只读）和rw（读写）。</p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker run -it -v v123:/volume ubuntu bash
+root@47720e571e92:/# echo a &gt; /volume/file
+root@47720e571e92:/# exit
+[bczhc@bczhc-manjaro docker]$ docker run -it -v v123:/volume ubuntu bash
+root@9c0908b36dd1:/# cat volume/file 
+a
+root@9c0908b36dd1:/# exit
+</code></pre>
+<p>上面的示例使用了刚才创建的“v123”卷，并且向里面写了一个文件。退出容器后再创建一个容器，同样也使用那个卷，就会发现文件还是保留的，这个文件就存储在这个卷中。<code>-v</code>后的冒号前是卷的名字，冒号后是容器内加载此卷的位置。</p>
+<p>当inspect它的时候，可以看到在“Mounts”这个位置有使用的卷的相当信息。当然一个卷也是可以用<code>docker inspect</code>查看它的信息的。</p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker inspect 9c0908b36dd1
+
+...
+&quot;Mounts&quot;: [
+            {
+                &quot;Type&quot;: &quot;volume&quot;,
+                &quot;Name&quot;: &quot;v123&quot;,
+                &quot;Source&quot;: &quot;/var/lib/docker/volumes/v123/_data&quot;,
+                &quot;Destination&quot;: &quot;/volume&quot;,
+                &quot;Driver&quot;: &quot;local&quot;,
+                &quot;Mode&quot;: &quot;z&quot;,
+                &quot;RW&quot;: true,
+                &quot;Propagation&quot;: &quot;&quot;
+            }
+        ],
+...
+</code></pre>
+<p>另外当<code>HOST-DIR</code>为本地的位置的时候，Docker会对指定的位置进行挂载，而不是创建一个数据卷。要注意的是，当冒号前是一个本地位置的时候，应当为绝对路径。</p>
+<pre><code>docker run -it -v `pwd`/test:/test ubuntu bash
+root@2b6627580854:/# ls -d test
+test
+root@2b6627580854:/# exit
+[bczhc@bczhc-manjaro docker]$ docker volume list
+DRIVER    VOLUME NAME
+local     26a9cb0966f37f801cad57faffda177131021a5ff632d19d8474c8b5f2b5f8d6
+local     v123
+</code></pre>
+<p>在卷列表里面并没有一个新的卷出现。</p>
+<pre><code>docker inspect 2b662
+
+...
+&quot;Mounts&quot;: [
+            {
+                &quot;Type&quot;: &quot;bind&quot;,
+                &quot;Source&quot;: &quot;/home/bczhc/t/docker/test&quot;,
+                &quot;Destination&quot;: &quot;/test&quot;,
+                &quot;Mode&quot;: &quot;&quot;,
+                &quot;RW&quot;: true,
+                &quot;Propagation&quot;: &quot;rprivate&quot;
+            }
+        ],
+...
+</code></pre>
+<p>当inspect这个容器的时候，在“Mounts”位置，“Type”从刚才的“volume”变成了“bind”。其实<code>-v</code>的操作本身就是挂载，见下面。</p>
+<h4 id="挂载"><a class="header" href="#挂载">挂载</a></h4>
+<p>挂载有三种类型，volume，bind和tmpfs。前面当使用一个数据卷的时候，就是使用volume类型挂载；当冒号前是一个本地位置的时候，就使用了bind模式来挂载。</p>
+<p>在创建窗口的时候可以使用<code>--mount</code>来指定挂载。其实下面的事情<code>-v</code>就可以做到，而且使用<code>--mount</code>还更加烦琐，不过两者之间确实还是有行为上的区别的，比如使用<code>-v</code>挂载本地路径时，本地路径可以不存在，Docker会自动创建，而<code>--mount</code>并不会……</p>
+<p><strong>挂载一个数据卷：</strong></p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ docker run -it --mount type=volume,source=v123,destination=/v ubuntu bash
+lroot@8cfe85eb0512:/# ls -d v
+v
+root@8cfe85eb0512:/# exit
+</code></pre>
+<p><strong>挂载本地位置：</strong></p>
+<pre><code>[bczhc@bczhc-manjaro docker]$ mkdir dir
+[bczhc@bczhc-manjaro docker]$ docker run -it --mount type=bind,source=`pwd`/dir,destination=/a ubuntu bash
+root@3a793abb5253:/# ls -d a
+a
+root@3a793abb5253:/# exit
+</code></pre>
 <h4 id="其它"><a class="header" href="#其它">其它</a></h4>
 <h5 id="审查对象"><a class="header" href="#审查对象">审查对象</a></h5>
-<p><code>docker inspect [OPTIONS] NAME|ID [NAME|ID...]</code></p>
+<blockquote>
+<p>docker inspect [OPTIONS] NAME|ID [NAME|ID...]</p>
+</blockquote>
 <p>审查可以输出一些有关docker对象的低等级信息，这些信息很多时候很有用处。</p>
 
                     </main>

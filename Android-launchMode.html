@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>screen(1) - Notes</title>
+        <title>Android-launchMode - Notes</title>
 
 
         <!-- Custom HTML head -->
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="Unicode-and-UTF-family.html"><strong aria-hidden="true">1.</strong> Unicode-and-UTF-family</a></li><li class="chapter-item expanded "><a href="Android-display-units.html"><strong aria-hidden="true">2.</strong> Android-display-units</a></li><li class="chapter-item expanded "><a href="screen(1).html" class="active"><strong aria-hidden="true">3.</strong> screen(1)</a></li><li class="chapter-item expanded "><a href="docker.html"><strong aria-hidden="true">4.</strong> docker</a></li><li class="chapter-item expanded "><a href="graphics.html"><strong aria-hidden="true">5.</strong> graphics</a></li><li class="chapter-item expanded "><a href="Android-launchMode.html"><strong aria-hidden="true">6.</strong> Android-launchMode</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="Unicode-and-UTF-family.html"><strong aria-hidden="true">1.</strong> Unicode-and-UTF-family</a></li><li class="chapter-item expanded "><a href="Android-display-units.html"><strong aria-hidden="true">2.</strong> Android-display-units</a></li><li class="chapter-item expanded "><a href="screen(1).html"><strong aria-hidden="true">3.</strong> screen(1)</a></li><li class="chapter-item expanded "><a href="docker.html"><strong aria-hidden="true">4.</strong> docker</a></li><li class="chapter-item expanded "><a href="graphics.html"><strong aria-hidden="true">5.</strong> graphics</a></li><li class="chapter-item expanded "><a href="Android-launchMode.html" class="active"><strong aria-hidden="true">6.</strong> Android-launchMode</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -142,83 +142,62 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="自己较常用的一些screen操作"><a class="header" href="#自己较常用的一些screen操作">自己较常用的一些screen操作</a></h2>
-<h3 id="基本窗口操作"><a class="header" href="#基本窗口操作">基本窗口操作</a></h3>
-<p><strong>create:</strong> screen -S &lt;session-name&gt;</p>
-<p><strong>reattach:</strong> screen -dr &lt;session-name&gt;</p>
-<p><strong>list:</strong> screen -ls</p>
-<p><strong>detach:</strong></p>
-<pre><code>       ───────────────────────────────────────────────────────────────────────
-       C-a d              (detach)          Detach screen from this terminal.
-       ───────────────────────────────────────────────────────────────────────
+                        <h1 id="android-launchmode"><a class="header" href="#android-launchmode">Android launchMode</a></h1>
+<h2 id="语法"><a class="header" href="#语法">语法</a></h2>
+<pre><code class="language-xml">&lt;activity android:launchMode=[&quot;standard&quot; | &quot;singleTop&quot; | &quot;singleTask&quot; | &quot;singleInstance&quot;] ... &gt; ... &lt;/activity&gt;
 </code></pre>
-<h3 id="多视图"><a class="header" href="#多视图">多视图</a></h3>
-<pre><code>       ───────────────────────────────────────────────────────────────────────
-       C-a S              (split)           Split the current region horizon‐
-                                            tally into  two  new  ones.   See
-                                            also only, remove, focus.
-       ───────────────────────────────────────────────────────────────────────
-       C-a |              (split -v)        Split the current  region  verti‐
-                                            cally into two new ones.
-       ───────────────────────────────────────────────────────────────────────
-       C-a tab            (focus)           Switch the  input  focus  to  the
-                                            next region.  See also split, re‐
-                                            move, only.
-       ───────────────────────────────────────────────────────────────────────
-       C-a digit          (select 0-9)      Switch to window number 0 - 9
-       ───────────────────────────────────────────────────────────────────────
-       C-a c,             (screen)          Create  a new window with a shell
-                                            and switch to that window.
-       ───────────────────────────────────────────────────────────────────────
-       C-a '              (select)          Prompt  for a window name or num‐
-                                            ber to switch to.
-       ───────────────────────────────────────────────────────────────────────
-       C-a &quot;              (windowlist -b)   Present a list of all windows for
-                                            selection.
-       ───────────────────────────────────────────────────────────────────────
-       C-a Q              (only)            Delete  all  regions but the cur‐
-                                            rent one.  See  also  split,  re‐
-                                            move, focus.
-       ───────────────────────────────────────────────────────────────────────
-</code></pre>
-<p>若要在reattach之后仍然保持布局，在已attach上screen的时候进行：</p>
-<ol>
-<li></li>
-</ol>
-<pre><code>       ───────────────────────────────────────────────────────────────────────
-       C-a :              (colon)           Enter command line mode.
-       ───────────────────────────────────────────────────────────────────────
-</code></pre>
-<ol start="2">
-<li>输入<code>layout save default</code>命令并回车</li>
-</ol>
-<h3 id="更多窗口操作"><a class="header" href="#更多窗口操作">更多窗口操作</a></h3>
-<p><strong>kill:</strong></p>
-<pre><code>       ───────────────────────────────────────────────────────────────────────
-       C-a k              (kill)            Destroy current window.
-       ───────────────────────────────────────────────────────────────────────
-</code></pre>
-<p><strong>进入光标移动模式（可上下浏览滚动）：</strong></p>
-<pre><code>       ───────────────────────────────────────────────────────────────────────
-
-       C-a [,             (copy)            Enter copy/scrollback mode.
-       C-a esc
-       ───────────────────────────────────────────────────────────────────────
-</code></pre>
-<p><strong>退出光标移动模式：</strong></p>
-<p><kbd>esc</kbd>/<kbd>q</kbd></p>
+<h2 id="基本行为"><a class="header" href="#基本行为">基本行为</a></h2>
+<ul>
+<li>
+<p><code>standard</code>（默认行为）：</p>
+<ul>
+<li>把目标Activity放在调用者Activity的栈顶</li>
+</ul>
+</li>
+<li>
+<p><code>singleTask</code>：</p>
+<ul>
+<li>
+<p>如果目标Activity没有在启动着，则让目标Activity启动在目标Activity所属App的任务栈栈顶（而不是在调用者Activity的任务栈中），并且把这整个任务栈都放在调用者Activity的任务线上方</p>
+</li>
+<li>
+<p>如果目标Activity已经在其所属App任务栈中，则不重新创建，而是把目标Activity上方所有Activity都清掉（不是杀死），使目标Activity在所属App任务栈最上方，然后再把这一整个任务栈都搬到调用者Activity任务栈上面</p>
+<p>（<strong>唯一性</strong>）</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>singleInstance</code>：</p>
+<ul>
+<li>
+<p>如果目标Activity没有在启动着，则创建一个包含着目标Activity的任务栈，这个栈中只有这么一个Activity，再把此任务栈放在调用者Activity上方</p>
+</li>
+<li>
+<p>如果目标Activity已经启动着，则把它上面和下面的所有Activity都清除（不是杀死），确保那个任务栈中只有一个目标Activity，再把此任务栈放在调用者Activity上方</p>
+</li>
+<li>
+<p>如果在此目标Activity中又启动了Activity，由于“单一实例”的限制，只能把新启动的Activity放在其所属App中任务栈中，再把整个任务栈般过来放在原任务栈上方</p>
+<p>（<strong>唯一性</strong>、<strong>独占性</strong>）</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>singleTop</code>：</p>
+<ul>
+<li>和<code>standard</code>基本相同，只是在启动时如果发现任务栈顶已经是目标Activity了，则复用而不启动。</li>
+</ul>
+</li>
+</ul>
+<p>注：以上行为只考虑默认<code>taskAffinity</code>。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="Android-display-units.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="graphics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="docker.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -226,13 +205,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="Android-display-units.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="graphics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="docker.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
